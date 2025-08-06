@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>ProGear Sportswear</title>
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/css/style.css">
   <style>
     /* Embedded CSS */
     h1 {
-      color: #005f73;
+      color: red;
     }
 
     /* Forms */
@@ -64,20 +64,21 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Welcome to Kalito SportsWear Shop</h1>
-    <p>Your one-stop shop for top-quality sports gear.</p>
+  <header id="main-header">
+    <h1 style="color: #005f73">Welcome to Kalito SportsWear Shop</h1>
+    <p style="color: white">Your one-stop shop for top-quality sports gear.</p>
   </header>
   <nav>
       <a href="index.html">Home</a> |
       <a href="products.html">Products</a> |
+      <a href="about.html">About</a> |
       <a href="#contact">Contact</a> |
       <a href="mailto:support@kalitogear.com">Email Us</a>
     </nav>
 
   <main>
 
-    <section id="popular-products">
+    <div id="popular-products">
         <h2>Popular Products</h2>
         <table border="1">
         <caption>Popular Products</caption>
@@ -110,9 +111,9 @@
             <td>$100</td>
         </tr>
         </table>
-    </section>
+    </div>
 
-    <section id="contact">
+    <div id="contact">
       <h2>Order Now</h2>
       <form action="#" method="get">
         <label for="name">Full Name:</label>
@@ -151,7 +152,7 @@
         <button type="submit">Submit Order</button>
         <button type="reset">Reset</button>
       </form>
-    </section>
+    </div>
   </main>
 
   <footer id="contact">

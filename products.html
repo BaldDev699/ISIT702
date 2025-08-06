@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Our Products - ProGear</title>
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/css/style.css">
   <style>
     /* Embedded CSS */
     h1 {
@@ -12,7 +12,7 @@
   </style>
 </head>
 <body>
-  <header>
+  <header id="main-header">
     <h1>Welcome to Kalito SportsWear Shop</h1>
     <p>Your one-stop shop for top-quality sports gear.</p>
   </header>
@@ -20,6 +20,7 @@
   <nav>
       <a href="index.html">Home</a> |
       <a href="products.html">Products</a> |
+      <a href="about.html">About</a> |
       <a href="#contact">Contact</a> |
       <a href="mailto:support@kalitogear.com">Email Us</a>
    </nav>
@@ -27,37 +28,43 @@
   <main>
     <h2>Our Featured Products</h2>
 
-    <section class="product-gallery">
+    <div class="product-gallery">
         <figure>
-        <img src="images/jersey1.jpg" alt="Home Jersey" width="300">
-        <figcaption>Jersey - $ 75</figcaption>
+            <span class="badge">New</span>
+            <img src="images/jersey1.jpg" alt="Home Jersey" width="300">
+            <figcaption>Jersey - $ 75</figcaption>
         </figure>
 
         <figure>
+            <span class="badge">New</span>
             <img src="images/tracksuit.jpg" alt="Kalitos Tracksuit" width="300">
             <figcaption>Tracksuit - $ 90</figcaption>
         </figure>
 
         <figure>
+            <span class="badge">New</span>
             <img src="images/football.jpg" alt="Official Match Ball" width="300">
             <figcaption>Official Match Ball - $ 100</figcaption>
         </figure>
 
         <figure>
+            <span class="badge">New</span>
             <img src="images/football-boots.jpg" alt="Football Boots" width="300">
             <figcaption>Adidas Predator Boots - $ 120</figcaption>
         </figure>
 
         <figure>
+            <span class="badge">New</span>
             <img src="images/referee.jpg" alt="Referee Uniform" width="300">
             <figcaption>Referee Uniform - $ 50</figcaption>
         </figure>
 
         <figure>
-            <img src="images/goalkeeper-gloves.jpg" alt="Goalkeeper Gloves" width="300">
+            <span class="badge">New</span>
+            <img src="images/goalkeeper-gloves.jpg" alt="Goalkeeper Gloves" width="300"">
             <figcaption>Goalkeeper Gloves - $ 40</figcaption>
         </figure>
-    </section>
+    </div>
   </main>
 
   <footer id="contact">

@@ -4,14 +4,17 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+
 /* Body */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f9;
 }
 
+
 /* Header & Nav */
-header {
+#main-header {
   background-color: #4caf50;
   color: white;
   padding: 25px;
@@ -20,11 +23,18 @@ header {
   overflow: auto;
 }
 
+#main-header p {
+    color: greenyellow;
+    font-weight: 500;
+}
+
 nav {
-  position: relative;
   text-align: center;
   padding: 10px 0;
   background-color: #343a40;
+  position: sticky;
+  z-index: 1000;
+  top: 0;
 }
 
 nav a {
@@ -41,25 +51,28 @@ nav a:hover {
   text-decoration: underline;
 }
 
-/* Section */
-section {
+/* div */
+div {
     padding: 25px;
     margin: 20px auto;
     max-width: 900px;
-    background-color: #ffffff;
+    background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
+    font-family: inherit;
 }
-section:hover {
+
+div:hover {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
-section h2 {
+div h2 {
 color: #007bff;
     /* Bright Blue */
     font-size: 1.8rem;
     margin-bottom: 15px;
 }
+
 
 /* Main content */
 main {
@@ -112,6 +125,7 @@ footer {
   color: #ffffff;
   font-size: 0.95rem;
   text-align: center;
+  clear: both;
 }
 
 footer a {
@@ -138,6 +152,7 @@ figure {
   flex-direction: column;
   align-items: center;
   border: 1px solid #ccc;
+  position: relative;
   padding: 10px;
   width: 250px;
   background-color: #fff;
@@ -152,6 +167,7 @@ figure:hover {
 }
 
 figure img {
+  border  : 1px solid wheat;
   width: 100%;
   height: auto;
   border-radius: 6px;
@@ -163,4 +179,37 @@ figcaption {
   font-weight: bold;
   color: #023e8a;
   text-align: center;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: red;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Thumbnail Style for About Page Image */
+.about-section .thumbnail {
+  width: 250px;
+  height: auto;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-section .thumbnail:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8);
 }

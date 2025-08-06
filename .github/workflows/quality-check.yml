@@ -36,9 +36,9 @@ jobs:
     - name: Lint CSS files
       run: |
         echo "Running Stylelint on CSS files..."
-        if [ -f "static/style.css" ]; then
-          echo "Linting static/style.css"
-          stylelint "static/style.css" --config-basedir . || echo "Stylelint warnings found"
+        if [ -f "static/css/style.css" ]; then
+          echo "Linting static/css/style.css"
+          stylelint "static/css/style.css" --config-basedir . || echo "Stylelint warnings found"
         fi
 
     - name: Check file structure
@@ -46,7 +46,7 @@ jobs:
         echo "Checking project structure..."
         
         # Check if required files exist
-        required_files=("index.html" "static/style.css")
+        required_files=("index.html" "static/css/style.css")
         for file in "${required_files[@]}"; do
           if [ ! -f "$file" ]; then
             echo "❌ Missing required file: $file"

@@ -56,7 +56,7 @@ jobs:
           });
 
           test('CSS file should exist', () => {
-            expect(fs.existsSync('static/style.css')).toBe(true);
+            expect(fs.existsSync('static/css/style.css')).toBe(true);
           });
 
           test('Form elements should be present', () => {

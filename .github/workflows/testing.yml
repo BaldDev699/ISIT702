@@ -1,0 +1,166 @@
+name: Automated Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install testing dependencies
+      run: |
+        npm init -y
+        npm install --save-dev puppeteer jest
+
+    - name: Create test directory
+      run: mkdir -p tests
+
+    - name: Create basic HTML tests
+      run: |
+        cat > tests/html-structure.test.js << 'EOF'
+        const fs = require('fs');
+        const path = require('path');
+
+        describe('HTML Structure Tests', () => {
+          test('index.html should exist', () => {
+            expect(fs.existsSync('index.html')).toBe(true);
+          });
+
+          test('index.html should have proper DOCTYPE', () => {
+            const content = fs.readFileSync('index.html', 'utf8');
+            expect(content).toMatch(/<!DOCTYPE html>/i);
+          });
+
+          test('index.html should have title tag', () => {
+            const content = fs.readFileSync('index.html', 'utf8');
+            expect(content).toMatch(/<title>.*<\/title>/i);
+          });
+
+          test('CSS file should exist', () => {
+            expect(fs.existsSync('static/style.css')).toBe(true);
+          });
+
+          test('Form elements should be present', () => {
+            const content = fs.readFileSync('index.html', 'utf8');
+            expect(content).toMatch(/<form/i);
+            expect(content).toMatch(/type="submit"/i);
+            expect(content).toMatch(/type="email"/i);
+          });
+
+          test('Navigation links should be present', () => {
+            const content = fs.readFileSync('index.html', 'utf8');
+            expect(content).toMatch(/<nav/i);
+            expect(content).toMatch(/href="products.html"/i);
+          });
+        });
+        EOF
+
+    - name: Create browser tests
+      run: |
+        cat > tests/browser.test.js << 'EOF'
+        const puppeteer = require('puppeteer');
+        const fs = require('fs');
+        const path = require('path');
+
+        describe('Browser Tests', () => {
+          let browser;
+          let page;
+
+          beforeAll(async () => {
+            browser = await puppeteer.launch({
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+            page = await browser.newPage();
+          });
+
+          afterAll(async () => {
+            await browser.close();
+          });
+
+          test('Page should load without errors', async () => {
+            const htmlContent = fs.readFileSync('index.html', 'utf8');
+            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            
+            const title = await page.title();
+            expect(title).toBeTruthy();
+          });
+
+          test('Form should be interactive', async () => {
+            const htmlContent = fs.readFileSync('index.html', 'utf8');
+            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            
+            // Check if form exists
+            const form = await page.$('form');
+            expect(form).toBeTruthy();
+            
+            // Check if submit button exists
+            const submitButton = await page.$('button[type="submit"]');
+            expect(submitButton).toBeTruthy();
+          });
+
+          test('Required form fields should be present', async () => {
+            const htmlContent = fs.readFileSync('index.html', 'utf8');
+            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            
+            const nameInput = await page.$('#name');
+            const emailInput = await page.$('#email');
+            const quantityInput = await page.$('#quantity');
+            
+            expect(nameInput).toBeTruthy();
+            expect(emailInput).toBeTruthy();
+            expect(quantityInput).toBeTruthy();
+          });
+        });
+        EOF
+
+    - name: Update package.json for testing
+      run: |
+        cat > package.json << 'EOF'
+        {
+          "name": "kalito-sportswear-tests",
+          "version": "1.0.0",
+          "scripts": {
+            "test": "jest"
+          },
+          "jest": {
+            "testEnvironment": "node",
+            "testTimeout": 30000
+          },
+          "devDependencies": {
+            "puppeteer": "^21.0.0",
+            "jest": "^29.0.0"
+          }
+        }
+        EOF
+
+    - name: Run tests
+      run: npm test
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.browser }}
+        path: |
+          coverage/
+          test-results/

@@ -1,0 +1,133 @@
+name: Security Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scan weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install security tools
+      run: |
+        npm install -g retire
+        npm install -g eslint-plugin-security
+
+    - name: Check for vulnerable dependencies
+      run: |
+        echo "Checking for known vulnerabilities..."
+        # Create a basic package.json if it doesn't exist
+        if [ ! -f "package.json" ]; then
+          echo '{"name": "kalito-sportswear", "version": "1.0.0"}' > package.json
+        fi
+        retire --path . || echo "No Node.js dependencies to check"
+
+    - name: Scan HTML for security issues
+      run: |
+        echo "Scanning HTML files for potential security issues..."
+        
+        # Check for inline JavaScript
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            echo "Scanning $file..."
+            
+            # Check for inline scripts
+            if grep -q "<script" "$file"; then
+              echo "⚠️  Inline scripts found in $file"
+              grep -n "<script" "$file"
+            fi
+            
+            # Check for external script sources
+            if grep -q "src=" "$file" | grep -q "http"; then
+              echo "ℹ️  External resources found in $file"
+              grep -n "src=" "$file" | grep "http"
+            fi
+            
+            # Check for potential XSS vectors
+            if grep -qi "javascript:" "$file"; then
+              echo "⚠️  Potential XSS vector found in $file"
+              grep -n -i "javascript:" "$file"
+            fi
+          fi
+        done
+
+    - name: Check file permissions and structure
+      run: |
+        echo "Checking file permissions and structure..."
+        
+        # Check for files that shouldn't be in repo
+        sensitive_files=(".env" ".env.local" "config.json" "secrets.txt")
+        for file in "${sensitive_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "⚠️  Sensitive file found: $file"
+          fi
+        done
+        
+        # Check for proper .gitignore
+        if [ ! -f ".gitignore" ]; then
+          echo "ℹ️  No .gitignore file found"
+        fi
+
+    - name: Content Security Policy Check
+      run: |
+        echo "Checking for Content Security Policy..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            if grep -q "Content-Security-Policy" "$file"; then
+              echo "✅ CSP found in $file"
+            else
+              echo "ℹ️  No CSP header found in $file"
+            fi
+          fi
+        done
+
+    - name: Check for HTTPS usage
+      run: |
+        echo "Checking for HTTPS usage..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            # Check for http:// links (should be https://)
+            if grep -q "http://" "$file"; then
+              echo "⚠️  HTTP links found in $file (consider using HTTPS):"
+              grep -n "http://" "$file"
+            fi
+          fi
+        done
+
+    - name: Generate security report
+      run: |
+        echo "## Security Scan Report" > security-report.md
+        echo "Generated on: $(date)" >> security-report.md
+        echo "" >> security-report.md
+        echo "### Scanned Files:" >> security-report.md
+        ls -la *.html >> security-report.md
+        echo "" >> security-report.md
+        echo "### Recommendations:" >> security-report.md
+        echo "- Consider adding Content Security Policy headers" >> security-report.md
+        echo "- Ensure all external links use HTTPS" >> security-report.md
+        echo "- Keep dependencies updated" >> security-report.md
+        echo "- Validate all user inputs in forms" >> security-report.md
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report
+        path: security-report.md

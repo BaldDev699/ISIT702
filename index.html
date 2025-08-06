@@ -9,14 +9,63 @@
     h1 {
       color: #005f73;
     }
-    .thumbnail:hover {
-      transform: scale(1.05);
+
+    /* Forms */
+
+    form {
+        max-width: 650px;
+        margin: 25px auto;
+    }
+
+    form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    form input[type="radio"],
+    form input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+    }
+
+
+    form input, form select, form button {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 18px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    form input:focus, form textarea:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    form button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+        background-color: #0056b3;
+    }
+
+    form button:active {
+        background-color: #004085;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Welcome to KalitoGear Sportswear</h1>
+    <h1>Welcome to Kalito SportsWear Shop</h1>
     <p>Your one-stop shop for top-quality sports gear.</p>
   </header>
   <nav>
@@ -50,20 +99,30 @@
             <td>Nike Dri-Fit</td>
             <td>$75</td>
         </tr>
+        <tr>
+            <td>Tracksuit</td>
+            <td>Kalitos Tracksuit</td>
+            <td>$90</td>
+        </tr>
+        <tr>
+            <td>Match Ball</td>
+            <td>Official Match Ball</td>
+            <td>$100</td>
+        </tr>
         </table>
     </section>
 
     <section id="contact">
       <h2>Order Now</h2>
-      <form action="products.html" method="get">
+      <form action="#" method="get">
         <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name"><br><br>
+        <input type="text" id="name" name="name" required><br><br>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email"><br><br>
+        <input type="email" id="email" name="email" required><br><br>
 
         <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity"><br><br>
+        <input type="number" id="quantity" name="quantity" required><br><br>
 
         <label>Preferred Item:</label>
         <input type="radio" name="item" value="boots"> Boots
@@ -77,7 +136,10 @@
         <select id="product" name="product">
           <option value="boots">Football Boots</option>
           <option value="jersey">Jersey</option>
-          <option value="ball">Football</option>
+          <option value="ball">Match Ball</option>
+          <option value="tracksuit">Tracksuit</option>
+          <option value="gloves">Goalkeeper Gloves</option>
+          <option value="referee">Referee Uniform</option>
         </select><br><br>
 
         <label for="date">Preferred Delivery Date:</label>

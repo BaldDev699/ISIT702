@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Generate changelog
+      run: |
+        echo "# Changelog for ${{ github.ref_name }}" > CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        echo "## Changes in this release:" >> CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        
+        # Get commits since last tag
+        if git describe --tags --abbrev=0 HEAD^ >/dev/null 2>&1; then
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^)
+          echo "### Commits since $LAST_TAG:" >> CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" $LAST_TAG..HEAD >> CHANGELOG.md
+        else
+          echo "### All commits:" >> CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
+        fi
+        
+        echo "" >> CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        echo "Generated on: $(date)" >> CHANGELOG.md
+
+    - name: Create release package
+      run: |
+        mkdir -p release-package
+        
+        # Copy website files
+        cp *.html release-package/
+        cp -r static release-package/
+        cp -r images release-package/
+        cp README.md release-package/
+        
+        # Create deployment guide
+        cat > release-package/DEPLOYMENT.md << 'EOF'
+        # Deployment Guide
+        
+        ## Static Website Deployment
+        
+        This is a static website that can be deployed to:
+        
+        ### GitHub Pages
+        1. Enable GitHub Pages in repository settings
+        2. Select source branch (main)
+        3. Website will be available at: https://username.github.io/repository-name
+        
+        ### Netlify
+        1. Connect your GitHub repository to Netlify
+        2. Build command: (leave empty)
+        3. Publish directory: /
+        
+        ### Vercel
+        1. Import project from GitHub
+        2. Framework preset: Other
+        3. Build and output settings: default
+        
+        ### Traditional Web Hosting
+        1. Upload all files to your web server
+        2. Ensure index.html is in the root directory
+        3. Configure web server to serve static files
+        
+        ## Files Structure
+        - index.html - Main homepage
+        - products.html - Products page
+        - contact.html - Contact page
+        - static/ - CSS and other assets
+        - images/ - Image files
+        EOF
+        
+        # Create zip archive
+        cd release-package
+        zip -r ../kalito-sportswear-${{ github.ref_name }}.zip .
+        cd ..
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ github.ref_name }}
+        body_path: CHANGELOG.md
+        files: |
+          kalito-sportswear-${{ github.ref_name }}.zip
+          CHANGELOG.md
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Deploy to GitHub Pages (if enabled)
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
+        exclude_assets: '.github,tests,node_modules'

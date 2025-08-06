@@ -1,0 +1,100 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        npm install -g htmlhint stylelint stylelint-config-standard
+
+    - name: Lint HTML files
+      run: |
+        echo "Running HTMLHint on HTML files..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            echo "Linting $file"
+            htmlhint "$file" || echo "HTMLHint warnings found in $file"
+          fi
+        done
+
+    - name: Lint CSS files
+      run: |
+        echo "Running Stylelint on CSS files..."
+        if [ -f "static/style.css" ]; then
+          echo "Linting static/style.css"
+          stylelint "static/style.css" --config-basedir . || echo "Stylelint warnings found"
+        fi
+
+    - name: Check file structure
+      run: |
+        echo "Checking project structure..."
+        
+        # Check if required files exist
+        required_files=("index.html" "static/style.css")
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+        # Check image files
+        if [ -d "images" ]; then
+          echo "✅ Images directory found"
+          echo "Image files:"
+          ls -la images/
+        fi
+
+    - name: Check for broken links (basic)
+      run: |
+        echo "Checking for basic link issues..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            echo "Checking links in $file"
+            # Check for common link issues
+            grep -n "href=" "$file" | grep -E "(http://|https://)" || echo "No external links found in $file"
+            grep -n "src=" "$file" | while read -r line; do
+              # Extract src paths and check if local files exist
+              src_path=$(echo "$line" | sed -n 's/.*src="\([^"]*\)".*/\1/p')
+              if [[ "$src_path" != http* ]] && [[ "$src_path" != "//"* ]]; then
+                if [ ! -f "$src_path" ]; then
+                  echo "⚠️  Potential missing file: $src_path in $file"
+                fi
+              fi
+            done
+          fi
+        done
+
+    - name: Generate report
+      run: |
+        echo "## Code Quality Report" > quality-report.md
+        echo "- ✅ HTML validation completed" >> quality-report.md
+        echo "- ✅ CSS linting completed" >> quality-report.md
+        echo "- ✅ File structure verified" >> quality-report.md
+        echo "- ✅ Basic link checking completed" >> quality-report.md
+        echo "" >> quality-report.md
+        echo "Generated on: $(date)" >> quality-report.md
+
+    - name: Upload quality report
+      uses: actions/upload-artifact@v4
+      with:
+        name: quality-report
+        path: quality-report.md

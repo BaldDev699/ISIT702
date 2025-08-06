@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProGear Sportswear</title>
+  <link rel="stylesheet" href="static/style.css">
+  <style>
+    /* Embedded CSS */
+    h1 {
+      color: #005f73;
+    }
+    .thumbnail:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to KalitoGear Sportswear</h1>
+    <p>Your one-stop shop for top-quality sports gear.</p>
+  </header>
+  <nav>
+      <a href="index.html">Home</a> |
+      <a href="products.html">Products</a> |
+      <a href="#contact">Contact</a> |
+      <a href="mailto:support@kalitogear.com">Email Us</a>
+    </nav>
+
+  <main>
+
+    <section id="popular-products">
+        <h2>Popular Products</h2>
+        <table border="1">
+        <caption>Popular Products</caption>
+        <tr>
+            <th rowspan="2">Item</th>
+            <th colspan="2">Details</th>
+        </tr>
+        <tr>
+            <th>Type</th>
+            <th>Price</th>
+        </tr>
+        <tr>
+            <td>Football Boots</td>
+            <td>Adidas Predator</td>
+            <td>$120</td>
+        </tr>
+        <tr>
+            <td>Jersey</td>
+            <td>Nike Dri-Fit</td>
+            <td>$75</td>
+        </tr>
+        </table>
+    </section>
+
+    <section id="contact">
+      <h2>Order Now</h2>
+      <form action="products.html" method="get">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity"><br><br>
+
+        <label>Preferred Item:</label>
+        <input type="radio" name="item" value="boots"> Boots
+        <input type="radio" name="item" value="jersey"> Jersey<br><br>
+
+        <label>Add-ons:</label>
+        <input type="checkbox" name="addons" value="bag"> Sports Bag
+        <input type="checkbox" name="addons" value="socks"> Socks<br><br>
+
+        <label for="product">Choose Product:</label>
+        <select id="product" name="product">
+          <option value="boots">Football Boots</option>
+          <option value="jersey">Jersey</option>
+          <option value="ball">Football</option>
+        </select><br><br>
+
+        <label for="date">Preferred Delivery Date:</label>
+        <input type="date" id="date" name="date"><br><br>
+
+        <label for="time">Delivery Time:</label>
+        <input type="time" id="time" name="time"><br><br>
+
+        <button type="submit">Submit Order</button>
+        <button type="reset">Reset</button>
+      </form>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <p>Contact us at: +1-7002345-Kalito | <a href="mailto:support@progear.com">support@kalitosportswear.com</a></p>
+  </footer>
+</body>
+</html>

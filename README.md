@@ -102,4 +102,3 @@ This project is for educational purposes as part of ISIT702 coursework.
 
 ---
 
-*Built with ❤️ for ISIT702 - Frontend Web Programming*
